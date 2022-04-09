@@ -1,0 +1,41 @@
+version: "3.8"
+
+services:
+  admin:
+    build:
+      context: ./tutors_assistant
+    command: >
+      sh -c "python manage.py makemigrations && python manage.py migrate && python manage.py runserver 0.0.0.0:8000"
+    volumes:
+      - ./tutors_assistant:/tutors_assistant/
+    ports:
+      - 8000:8000
+    env_file:
+      - ./.env
+    depends_on:
+      - postgres
+
+  bot:
+    build:
+      context: ./tutors_assistant
+    command: >
+      sh -c "python manage.py bot_start"
+    env_file:
+      - ./.env
+    depends_on:
+      - postgres
+      - admin
+    volumes:
+      - ./tutors_assistant:/tutors_assistant/
+
+  postgres:
+    image: postgres:13.0-alpine
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+    ports:
+      - 5432:5432
+    env_file:
+      - ./.env
+
+volumes:
+  postgres_data:
