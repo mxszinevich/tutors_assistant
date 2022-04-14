@@ -2,7 +2,7 @@ from aiogram.utils import executor
 from django.core.management import BaseCommand
 
 from bot.loader import dp
-from bot.utils import on_startup
+from bot.utils.on_startup import on_startup
 
 # States
 from bot.states import RegistrationState, MenuState

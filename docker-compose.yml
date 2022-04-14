@@ -28,6 +28,27 @@ services:
     volumes:
       - ./tutors_assistant:/tutors_assistant/
 
+  rabbitmq:
+    image: rabbitmq:3-management-alpine
+    hostname: rabbitmq
+    ports:
+      - 5672:5672
+      - 15672:15672
+
+  rabbitmq_consumer:
+    build:
+      context: ./tutors_assistant
+    command: >
+      sh -c "python consumer.py"
+    env_file:
+      - ./.env
+    restart: always
+    depends_on:
+      - bot
+      - rabbitmq
+    volumes:
+      - ./tutors_assistant:/tutors_assistant/
+
   postgres:
     image: postgres:13.0-alpine
     volumes:

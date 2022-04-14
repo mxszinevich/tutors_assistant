@@ -98,7 +98,7 @@ async def homework(call: CallbackQuery, callback_data: dict):
         if file["file"]:
             medias.append(
                 InputMediaDocument(
-                    media=InputFile(path_or_bytesio=f'media/{file["file"]}'),
+                    media=InputFile(path_or_bytesio=f'admin/media/{file["file"]}'),
                     caption=markdown.text(markdown.hbold(file["description"])),
                 )
             )

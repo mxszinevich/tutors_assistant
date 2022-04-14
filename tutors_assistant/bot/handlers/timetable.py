@@ -43,4 +43,6 @@ async def get_timetable(call: CallbackQuery, callback_data: dict):
             "\n".join(text_timetable), reply_markup=timetable_keyboard
         )
     else:
-        await call.message.edit_text(text=ANSWER_IS_EMPTY, reply_markup=timetable_keyboard)
+        await call.message.edit_text(
+            text=ANSWER_IS_EMPTY, reply_markup=timetable_keyboard
+        )
