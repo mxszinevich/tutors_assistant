@@ -11,6 +11,8 @@ from bot.keyboards.resources import get_resources_keyboard, callback_data_resour
 from bot.loader import dp
 from bot.standard_bot_answers import ANSWER_IS_EMPTY
 
+from admin.config.settings import MEDIA_ROOT
+
 
 @dp.callback_query_handler(
     callback_data_base_menu.filter(action="resources"), RegistrationFilter()
@@ -46,5 +48,5 @@ async def get_resourse(call: CallbackQuery, callback_data):
     await call.message.edit_text(text=message_text)
     if resource["file"]:
         await call.message.answer_document(
-            document=InputFile(path_or_bytesio=f'admin/media/{resource["file"]}')
+            document=InputFile(path_or_bytesio=f'{MEDIA_ROOT}/{resource["file"]}')
         )

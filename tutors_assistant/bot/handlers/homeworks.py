@@ -16,6 +16,7 @@ from aiogram.types import (
 from aiogram.utils import markdown
 from django.db.utils import DatabaseError
 
+from admin.config.settings import MEDIA_ROOT
 from bot.db_api import (
     get_student_homeworks,
     get_homework,
@@ -98,7 +99,7 @@ async def homework(call: CallbackQuery, callback_data: dict):
         if file["file"]:
             medias.append(
                 InputMediaDocument(
-                    media=InputFile(path_or_bytesio=f'admin/media/{file["file"]}'),
+                    media=InputFile(path_or_bytesio=f'{MEDIA_ROOT}/{file["file"]}'),
                     caption=markdown.text(markdown.hbold(file["description"])),
                 )
             )
