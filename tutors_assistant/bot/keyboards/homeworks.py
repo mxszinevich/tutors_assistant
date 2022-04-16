@@ -4,6 +4,7 @@ from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 from aiogram.utils.callback_data import CallbackData
 
 from bot.keyboards import callback_data_base_menu
+from bot.standard_bot_answers import BUTTON_BACK
 
 callback_data_homeworks = CallbackData("homework", "id", "action")
 callback_data_homework_answer = CallbackData("homework", "id", "action")
@@ -41,7 +42,7 @@ def get_homeworks_keyboard(homeworks: List[Dict[str, Any]]) -> InlineKeyboardMar
     inline_keyboard.append(
         [
             InlineKeyboardButton(
-                text="<- Назад",
+                text=BUTTON_BACK,
                 callback_data=callback_data_base_menu.new(
                     id=homework["id"], action="back"
                 ),

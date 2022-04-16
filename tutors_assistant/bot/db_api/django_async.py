@@ -6,7 +6,12 @@ from django.core.exceptions import FieldError
 from django.core.files import File
 from django.db.models import Exists, OuterRef
 
-from admin.homeworks.models import HomeWork, HomeworkFiles, HomeworkAnswer
+from admin.homeworks.models import (
+    HomeWork,
+    HomeworkFiles,
+    HomeworkAnswer,
+    ResourceMaterials,
+)
 from admin.users.models import Student
 from admin.users.models.sudent_timetable import StudentTimeTable
 
@@ -93,3 +98,35 @@ def get_student_timetable(student_telegram_id: int) -> dict:
         ).values()
     )
     return timetable
+
+
+@sync_to_async
+def get_student_resourses(student_telegram_id: int) -> dict:
+    """
+    Получение дополнительных материалов студента
+    """
+
+    resourses = list(
+        ResourceMaterials.objects.filter(
+            student__telegram_id=student_telegram_id, active=True
+        ).values()
+    )
+    return resourses
+
+
+@sync_to_async
+def get_student_resourse(student_telegram_id: int, resource_id: int) -> dict:
+    """
+    Получение экземпляра дополнительных материалов студента
+    """
+
+    resourse = dict(
+        ResourceMaterials.objects.filter(
+            student__telegram_id=student_telegram_id,
+            id=resource_id,
+            active=True,
+        )
+        .values()
+        .first()
+    )
+    return resourse

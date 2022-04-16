@@ -106,9 +106,6 @@ async def homework(call: CallbackQuery, callback_data: dict):
 
     await call.message.edit_text(homework_text)
     if medias:
-        await dp.bot.send_chat_action(
-            chat_id=call.message.chat.id, action=ChatActions.UPLOAD_PHOTO
-        )
         media_group = MediaGroup(medias=medias)
         await call.message.answer_media_group(media=media_group)
     await call.message.answer(

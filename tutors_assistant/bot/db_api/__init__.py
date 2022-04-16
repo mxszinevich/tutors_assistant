@@ -5,4 +5,6 @@ from .django_async import (
     get_homework,
     get_homework_files,
     create_homework_answer,
+    get_student_resourses,
+    get_student_resourse,
 )

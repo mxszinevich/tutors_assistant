@@ -18,5 +18,11 @@ base_meny_keyboard = InlineKeyboardMarkup(
                 callback_data=callback_data_base_menu.new(id=2, action="timetable"),
             ),
         ],
+        [
+            InlineKeyboardButton(
+                text="Учебные материалы 📚",
+                callback_data=callback_data_base_menu.new(id=3, action="resources"),
+            ),
+        ],
     ]
 )

@@ -16,6 +16,7 @@ class HomeworkAnswer(models.Model):
         null=True,
         blank=True,
     )
+
     description = models.TextField(verbose_name="Задание", max_length=200, blank=True)
     file = models.FileField(
         verbose_name="Фаил", upload_to=get_directory_path, blank=True, null=True

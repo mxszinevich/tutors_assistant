@@ -1,3 +1,4 @@
+from .resource_materials_inline import ResourceMaterialsInline
 from .homework_files_inline import HomeworkFilesInline
 from .homework_answer_inline import HomeWorkAnswerInline
 from .homework_admin import HomeWorkAdmin
