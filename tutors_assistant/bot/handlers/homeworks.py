@@ -181,6 +181,8 @@ async def get_homework_answer(message: Message, state: FSMContext):
             message=HOMEWORK_STUDENT_ANSWERED(
                 student_full_name=student_full_name[student_message_info]
             ),
+            type=r_Message.TYPE_MEDIA,
+            homework_id=homework_id,
         )
         producer(message.to_str())
 

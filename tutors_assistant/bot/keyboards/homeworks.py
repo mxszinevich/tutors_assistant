@@ -34,9 +34,7 @@ def get_homeworks_keyboard(homeworks: List[Dict[str, Any]]) -> InlineKeyboardMar
         [
             InlineKeyboardButton(
                 text=BUTTON_BACK,
-                callback_data=callback_data_base_menu.new(
-                    id=1, action="back"
-                ),
+                callback_data=callback_data_base_menu.new(id=1, action="back"),
             )
         ]
     ]
@@ -51,7 +49,7 @@ def get_homeworks_keyboard(homeworks: List[Dict[str, Any]]) -> InlineKeyboardMar
                         id=homework["id"], action="work_retrieve"
                     ),
                 ),
-            ]
+            ],
         )
 
     return InlineKeyboardMarkup(inline_keyboard=inline_keyboard)

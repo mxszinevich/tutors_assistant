@@ -1,12 +1,11 @@
 import asyncio
-import json
 import logging
 import os
 
 import aio_pika
 import django
 
-from rabbitmq_utils import Message
+from rabbitmq_utils import Message, chat_send_message
 
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "admin.config.settings")
 django.setup()
@@ -27,11 +26,12 @@ async def main() -> None:
         async with queue.iterator() as queue_iter:
             async for message in queue_iter:
                 async with message.process():
-
-                    message = Message(data=message.body)
-                    await dp.bot.send_message(
-                        chat_id=message.chat_id, text=message.message
-                    )
+                    try:
+                        rabbit_message = Message()
+                        rabbit_message.load_data(data=message.body)
+                        await chat_send_message(dp=dp, message=rabbit_message)
+                    except ValueError:
+                        pass
 
 
 if __name__ == "__main__":

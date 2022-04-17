@@ -16,6 +16,7 @@ def send_message_new_homework(
     """
     Сигнал, срабатывабщий после сохранения модели экземпляра HomeWork
     """
+
     if created:
         message = Message(
             chat_id=instance.student.telegram_chat, message=HOMEWORK_CREATE
