@@ -35,7 +35,7 @@ def set_type_format(field_data: str) -> str:
     Форматирование поля в зависимости от типа
     """
     if isinstance(field_data, date):
-        field_data = dateformat.format(field_data, "G:i d E")
+        field_data = dateformat.format(field_data, "d M Y")
 
     return field_data
 

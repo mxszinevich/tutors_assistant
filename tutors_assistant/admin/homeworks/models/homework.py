@@ -31,7 +31,7 @@ class HomeWork(models.Model):
         validators=[MinValueValidator(0), MaxValueValidator(100)],
         default=0,
     )
-    final_day = models.DateTimeField(
+    final_day = models.DateField(
         verbose_name="Последний день сдачи задания",
     )
     active = models.BooleanField(verbose_name="Задание активно", default=True)
@@ -43,7 +43,7 @@ class HomeWork(models.Model):
         return (
             f"{self.student.full_name} "
             f"- {self.name} "
-            f"- {self.final_day.strftime('%A, %d. %B %Y %I:%M%p') if self.final_day else ''}"
+            f"- {self.final_day.isoformat() if self.final_day else ''}"
         )
 
     class Meta:

@@ -30,10 +30,20 @@ def get_homeworks_keyboard(homeworks: List[Dict[str, Any]]) -> InlineKeyboardMar
     """
     Генерация клавиатуры для домашних заданий
     """
-    inline_keyboard = []
+    inline_keyboard = [
+        [
+            InlineKeyboardButton(
+                text=BUTTON_BACK,
+                callback_data=callback_data_base_menu.new(
+                    id=1, action="back"
+                ),
+            )
+        ]
+    ]
     for homework in homeworks:
         has_answer_status: str = get_answer_text_status(homework["has_answer"])
-        inline_keyboard.append(
+        inline_keyboard.insert(
+            0,
             [
                 InlineKeyboardButton(
                     text=f'{has_answer_status}{homework["name"]}',
@@ -43,17 +53,6 @@ def get_homeworks_keyboard(homeworks: List[Dict[str, Any]]) -> InlineKeyboardMar
                 ),
             ]
         )
-
-    inline_keyboard.append(
-        [
-            InlineKeyboardButton(
-                text=BUTTON_BACK,
-                callback_data=callback_data_base_menu.new(
-                    id=homework["id"], action="back"
-                ),
-            )
-        ]
-    )
 
     return InlineKeyboardMarkup(inline_keyboard=inline_keyboard)
 

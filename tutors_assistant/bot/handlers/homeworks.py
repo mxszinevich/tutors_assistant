@@ -57,13 +57,12 @@ async def homeworks_list(call: CallbackQuery, callback_data: dict):
         student_telegram_id=call.from_user.id
     )
     await call.answer()
+    homeworks_keyboard = get_homeworks_keyboard(homeworks)
+    homeworks_text = ANSWER_HOMEWORKS_IS_EMPTY
     if homeworks:
-        await call.message.edit_text(
-            text=ANSWER_DATA_NOT_EMPTY,
-            reply_markup=get_homeworks_keyboard(homeworks),
-        )
-    else:
-        await call.message.answer(ANSWER_HOMEWORKS_IS_EMPTY)
+        homeworks_text = ANSWER_DATA_NOT_EMPTY
+
+    await call.message.edit_text(text=homeworks_text, reply_markup=homeworks_keyboard)
 
 
 @dp.callback_query_handler(
