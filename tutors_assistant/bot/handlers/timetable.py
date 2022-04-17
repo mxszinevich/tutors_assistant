@@ -3,7 +3,7 @@ from typing import Dict, Any
 from aiogram.types import CallbackQuery
 
 from bot.db_api.django_async import get_student_timetable
-from bot.filters import RegistrationFilter
+from bot.filters import StudentFilter
 from bot.keyboards import (
     callback_data_base_menu,
     timetable_keyboard,
@@ -14,7 +14,7 @@ from bot.standard_bot_answers import ANSWER_IS_EMPTY, MAIN_MENU_TITLE
 
 
 @dp.callback_query_handler(
-    callback_data_base_menu.filter(action="back"), RegistrationFilter()
+    callback_data_base_menu.filter(action="back"), StudentFilter()
 )
 async def timetable_back(call: CallbackQuery, callback_data: dict):
     """
@@ -24,7 +24,7 @@ async def timetable_back(call: CallbackQuery, callback_data: dict):
 
 
 @dp.callback_query_handler(
-    callback_data_base_menu.filter(action="timetable"), RegistrationFilter()
+    callback_data_base_menu.filter(action="timetable"), StudentFilter()
 )
 async def get_timetable(call: CallbackQuery, callback_data: dict):
     """

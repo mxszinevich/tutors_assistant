@@ -1,6 +1,12 @@
 # BASE
 ANSWER_IS_EMPTY = "Тут пока пусто"
 
+# KEYBOARD
+
+BUTTON_BACK = "👈 Назад"
+BUTTON_ANSWER = "Ответить 😎"
+
+
 # MENU
 MAIN_MENU_TITLE = "Таааакс..., а вот и мое меню 🧾"
 
@@ -33,7 +39,12 @@ REGISTRATION_INVALID = "Хм, у меня не получается тебя с�
 HOMEWORK_CREATE = (
     "👽 Тук-тук-тук проверь список домашних заданий, там появилось что-то новенькое😂"
 )
+HOMEWORK_STATUS_DONE = "✅"
+HOMEWORK_STATUS_NOT_COMPLETED = "❌"
+HOMEWORK_STUDENT_ANSWERED = (
+    lambda student_full_name="": f"{student_full_name} ответил на задание"
+)
 
-# KEYBOARD
+# RESOURCES TEXT
 
-BUTTON_BACK = "<- Назад"
+ANSWER_RESOURCES = "📚"

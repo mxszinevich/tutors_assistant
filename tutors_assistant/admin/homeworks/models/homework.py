@@ -2,7 +2,7 @@ from django.core.validators import MinValueValidator, MaxValueValidator
 from django.db import models
 
 from admin.homeworks.managers import HomeWorkManager
-from admin.users.models import Student
+from admin.users.models import Student, Teacher
 from admin.homeworks.models import HomeWorkModule
 
 
@@ -15,6 +15,9 @@ class HomeWork(models.Model):
 
     student = models.ForeignKey(
         to=Student, verbose_name="Студент", on_delete=models.CASCADE
+    )
+    teacher = models.ForeignKey(
+        to=Teacher, verbose_name="Учитель", on_delete=models.CASCADE
     )
     module = models.ForeignKey(
         to=HomeWorkModule, verbose_name="Модуль задания", on_delete=models.CASCADE

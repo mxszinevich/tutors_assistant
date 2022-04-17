@@ -11,18 +11,19 @@ from aiogram.types import (
     InputMedia,
     Message,
     ContentType,
-    ChatActions,
 )
 from aiogram.utils import markdown
 from django.db.utils import DatabaseError
 
 from admin.config.settings import MEDIA_ROOT
+from admin.utils import producer
 from bot.db_api import (
     get_student_homeworks,
     get_homework,
     get_homework_files,
 )
-from bot.filters import RegistrationFilter
+from bot.db_api.django_async import get_teacher_homework, get_student
+from bot.filters import StudentFilter
 from bot.keyboards import get_homeworks_keyboard, callback_data_homeworks
 from bot.keyboards.base_menu import callback_data_base_menu, base_meny_keyboard
 from bot.keyboards.homeworks import (
@@ -38,13 +39,15 @@ from bot.standard_bot_answers import (
     START_HOMEWORK_ANSWER,
     ANSWER_START_MESSAGE,
     MAIN_MENU_TITLE,
+    HOMEWORK_STUDENT_ANSWERED,
 )
 from bot.states import HomeworkAnswerState
 from bot.utils import get_homework_text, building_homework_answer_file
+from rabbitmq_utils import Message as r_Message
 
 
 @dp.callback_query_handler(
-    callback_data_base_menu.filter(action="homeworks"), RegistrationFilter()
+    callback_data_base_menu.filter(action="homeworks"), StudentFilter()
 )
 async def homeworks_list(call: CallbackQuery, callback_data: dict):
     """
@@ -64,7 +67,7 @@ async def homeworks_list(call: CallbackQuery, callback_data: dict):
 
 
 @dp.callback_query_handler(
-    callback_data_base_menu.filter(action="back"), RegistrationFilter()
+    callback_data_base_menu.filter(action="back"), StudentFilter()
 )
 async def homework_back(call: CallbackQuery, callback_data: dict):
     """
@@ -74,7 +77,7 @@ async def homework_back(call: CallbackQuery, callback_data: dict):
 
 
 @dp.callback_query_handler(
-    callback_data_homeworks.filter(action="work_retrieve"), RegistrationFilter()
+    callback_data_homeworks.filter(action="work_retrieve"), StudentFilter()
 )
 async def homework(call: CallbackQuery, callback_data: dict):
     """
@@ -116,7 +119,7 @@ async def homework(call: CallbackQuery, callback_data: dict):
 
 
 @dp.callback_query_handler(
-    callback_data_homework_answer.filter(action="homework_answer"), RegistrationFilter()
+    callback_data_homework_answer.filter(action="homework_answer"), StudentFilter()
 )
 async def start_homework_answer(call: CallbackQuery, callback_data: dict):
     """
@@ -139,9 +142,15 @@ async def get_homework_answer_finish(message: Message, state: FSMContext):
     await state.reset_state(with_data=True)
 
 
-@dp.message_handler(state=HomeworkAnswerState.start, content_types=ContentType.PHOTO)
-@dp.message_handler(state=HomeworkAnswerState.start, content_types=ContentType.DOCUMENT)
-@dp.message_handler(state=HomeworkAnswerState.start, content_types=ContentType.TEXT)
+@dp.message_handler(
+    StudentFilter(), state=HomeworkAnswerState.start, content_types=ContentType.PHOTO
+)
+@dp.message_handler(
+    StudentFilter(), state=HomeworkAnswerState.start, content_types=ContentType.DOCUMENT
+)
+@dp.message_handler(
+    StudentFilter(), state=HomeworkAnswerState.start, content_types=ContentType.TEXT
+)
 async def get_homework_answer(message: Message, state: FSMContext):
     """
     Сохранение ответа на домашнее задание
@@ -155,5 +164,25 @@ async def get_homework_answer(message: Message, state: FSMContext):
         answer_data["answer_file"] = message.photo[-1]
     elif message.document:
         answer_data["answer_file"] = message.document
+
+    if not (
+        (
+            await get_homework(
+                student_telegram_id=message.from_user.id, homework_id=homework_id
+            )
+        )["has_answer"]
+    ):
+        teacher: Dict[str, Any] = await get_teacher_homework(homework_id=homework_id)
+        student_message_info = "full_name"
+        student_full_name: Dict[str, Any] = await get_student(
+            student_message_info, telegram_id=message.from_user.id
+        )
+        message = r_Message(
+            chat_id=teacher["telegram_chat"],
+            message=HOMEWORK_STUDENT_ANSWERED(
+                student_full_name=student_full_name[student_message_info]
+            ),
+        )
+        producer(message.to_str())
 
     await building_homework_answer_file(**answer_data)

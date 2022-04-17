@@ -4,7 +4,12 @@ from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 from aiogram.utils.callback_data import CallbackData
 
 from bot.keyboards import callback_data_base_menu
-from bot.standard_bot_answers import BUTTON_BACK
+from bot.standard_bot_answers import (
+    BUTTON_BACK,
+    BUTTON_ANSWER,
+    HOMEWORK_STATUS_DONE,
+    HOMEWORK_STATUS_NOT_COMPLETED,
+)
 
 callback_data_homeworks = CallbackData("homework", "id", "action")
 callback_data_homework_answer = CallbackData("homework", "id", "action")
@@ -15,9 +20,9 @@ def get_answer_text_status(has_answer: bool) -> str:
     Получение статуса домашнего задания
     """
     if has_answer:
-        status = "✅"
+        status = HOMEWORK_STATUS_DONE
     else:
-        status = "❌"
+        status = HOMEWORK_STATUS_NOT_COMPLETED
     return status
 
 
@@ -60,7 +65,7 @@ def get_homework_answer_keyboard(homework_id: int) -> InlineKeyboardMarkup:
     inline_keyboard = [
         [
             InlineKeyboardButton(
-                text="Ответить 😎",
+                text=BUTTON_ANSWER,
                 callback_data=callback_data_homework_answer.new(
                     id=homework_id, action="homework_answer"
                 ),

@@ -4,9 +4,9 @@ from aiogram.dispatcher.filters import BoundFilter
 from bot.db_api import has_student
 
 
-class RegistrationFilter(BoundFilter):
+class StudentFilter(BoundFilter):
     """
-    Фильтр, определяющий зарегистрирован ли пользователь
+    Фильтр, определяющий является ли пользователь студентом
     """
 
     async def check(self, message: types.Message) -> bool:

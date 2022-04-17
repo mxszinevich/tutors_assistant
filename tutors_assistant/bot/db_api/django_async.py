@@ -12,7 +12,7 @@ from admin.homeworks.models import (
     HomeworkAnswer,
     ResourceMaterials,
 )
-from admin.users.models import Student
+from admin.users.models import Student, Teacher
 from admin.users.models.sudent_timetable import StudentTimeTable
 
 
@@ -61,6 +61,9 @@ def get_homework(student_telegram_id: int, homework_id: int) -> Dict[str, Any]:
     return dict(
         HomeWork.objects.active()
         .filter(student__telegram_id=student_telegram_id, id=homework_id)
+        .annotate(
+            has_answer=Exists(HomeworkAnswer.objects.filter(homework=OuterRef("pk")))
+        )
         .values()
         .first()
     )
@@ -130,3 +133,20 @@ def get_student_resourse(student_telegram_id: int, resource_id: int) -> dict:
         .first()
     )
     return resourse
+
+
+@sync_to_async
+def get_teacher_homework(homework_id: int) -> Dict[str, Any]:
+    """
+    Получение данных учителя домашнего задания
+    """
+    return dict(Teacher.objects.filter(homework=homework_id).values().first())
+
+
+@sync_to_async
+def get_student(*values, **filters) -> Dict[str, Any]:
+    """
+    Получение данных учителя домашнего задания
+    """
+
+    return dict(Student.objects.filter(**filters).values(*values).first())

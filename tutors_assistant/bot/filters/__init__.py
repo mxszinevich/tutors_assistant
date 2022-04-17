@@ -1,1 +1,1 @@
-from .registration import RegistrationFilter, SenderUserFilter
+from .registration import StudentFilter, SenderUserFilter
