@@ -15,7 +15,7 @@ from bot.loader import dp
 
 async def main() -> None:
     logging.basicConfig(level=logging.DEBUG)
-    connection = await aio_pika.connect_robust(host="rabbitmq", port=5672)
+    connection = await aio_pika.connect_robust(host=os.getenv("HOSTNAME_RABBITMQ"), port=os.getenv("PORT_RABBITMQ"))
 
     queue_name = "homework"
 

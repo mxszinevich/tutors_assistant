@@ -30,9 +30,9 @@ services:
 
   rabbitmq:
     image: rabbitmq:3-management-alpine
-    hostname: rabbitmq
+    hostname: ${HOSTNAME_RABBITMQ}
     ports:
-      - 5672:5672
+      - 5672:${PORT_RABBITMQ}
       - 15672:15672
 
   rabbitmq_consumer:
