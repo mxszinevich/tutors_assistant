@@ -146,7 +146,7 @@ def get_teacher_homework(homework_id: int) -> Dict[str, Any]:
 @sync_to_async
 def get_student(*values, **filters) -> Dict[str, Any]:
     """
-    Получение данных учителя домашнего задания
+    Получение данных студента
     """
 
     return dict(Student.objects.filter(**filters).values(*values).first())

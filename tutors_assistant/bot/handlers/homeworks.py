@@ -156,6 +156,7 @@ async def get_homework_answer(message: Message, state: FSMContext):
     """
     homework_id = (await state.get_data()).get("homework_id")
     answer_data = {
+        "student_telegram_id": message.from_user.id,
         "homework_id": homework_id,
         "answer_text": message.text or message.caption or "",
     }
