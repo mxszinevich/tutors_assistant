@@ -29,5 +29,6 @@ async def building_homework_answer_file(
     await create_homework_answer(**answer_data)
 
     # yandex
-    answer_data.update(student_telegram_id=student_telegram_id)
-    await sender_homework_answer_to_yandex_disk(**answer_data)
+    if answer_file:
+        answer_data.update(student_telegram_id=student_telegram_id)
+        await sender_homework_answer_to_yandex_disk(**answer_data)

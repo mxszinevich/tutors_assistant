@@ -80,7 +80,7 @@ def get_homework_files(homework_id: int) -> List[Dict[str, Any]]:
 @sync_to_async
 def create_homework_answer(
     homework_id: int, file_path: Optional[str] = None, answer_text: str = ""
-):
+) -> int:
     """
     Сохранение ответа на задание
     """
@@ -88,6 +88,7 @@ def create_homework_answer(
     if file_path:
         answer.file.save(basename(file_path), content=File(open(file_path, "rb")))
     answer.save()
+    return answer.id
 
 
 @sync_to_async
@@ -150,3 +151,12 @@ def get_student(*values, **filters) -> Dict[str, Any]:
     """
 
     return dict(Student.objects.filter(**filters).values(*values).first())
+
+
+@sync_to_async
+def get_homework_answer(**filter) -> HomeworkAnswer:
+    """
+    Получение ответа на домашнее задание
+    """
+    homework_answer = HomeworkAnswer.objects.filter(**filter).first()
+    return homework_answer

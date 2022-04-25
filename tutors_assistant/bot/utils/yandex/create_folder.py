@@ -18,7 +18,7 @@ async def yandex_disk_create_folder(path: str) -> Response:
     }
 
     async with httpx.AsyncClient() as client:
-        response = await client.put(
+        response: Response = await client.put(
             url=create_folder_url,
             params={"path": path},
             headers=headers,
