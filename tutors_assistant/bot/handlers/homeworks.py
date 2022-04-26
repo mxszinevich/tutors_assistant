@@ -1,3 +1,4 @@
+import logging
 from typing import List, Dict, Any
 
 from aiogram.dispatcher import FSMContext
@@ -43,7 +44,12 @@ from bot.standard_bot_answers import (
 )
 from bot.states import HomeworkAnswerState
 from bot.utils import get_homework_text, building_homework_answer_file
+from logger_conf import handler
 from rabbitmq_utils import Message as r_Message
+
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.INFO)
+logger.addHandler(handler)
 
 
 @dp.callback_query_handler(
@@ -53,6 +59,7 @@ async def homeworks_list(call: CallbackQuery, callback_data: dict):
     """
     Отображение списка домашних заданий
     """
+    logger.info(f"homeworks_list: student_telegram_id={call.from_user.id}")
     homeworks: List[Dict[str, Any]] = await get_student_homeworks(
         student_telegram_id=call.from_user.id
     )
@@ -61,7 +68,9 @@ async def homeworks_list(call: CallbackQuery, callback_data: dict):
     homeworks_text = ANSWER_HOMEWORKS_IS_EMPTY
     if homeworks:
         homeworks_text = ANSWER_DATA_NOT_EMPTY
-
+    logger.info(
+        f"homeworks_list: student_telegram_id={call.from_user.id}: edit_text={homeworks_text}"
+    )
     await call.message.edit_text(text=homeworks_text, reply_markup=homeworks_keyboard)
 
 
@@ -85,6 +94,9 @@ async def homework(call: CallbackQuery, callback_data: dict):
     await call.answer()
 
     homework_id = callback_data["id"]
+    logger.info(
+        f"homework: student_telegram_id={call.from_user.id}: homework_id={homework_id}"
+    )
     try:
         homework: Dict[str, Any] = await get_homework(
             student_telegram_id=call.from_user.id, homework_id=homework_id
@@ -106,11 +118,16 @@ async def homework(call: CallbackQuery, callback_data: dict):
                 )
             )
     homework_text: str = get_homework_text(homework)
-
+    logger.info(
+        f"homework: student_telegram_id={call.from_user.id}: homework_id={homework_id}"
+    )
     await call.message.edit_text(homework_text)
     if medias:
         media_group = MediaGroup(medias=medias)
         await call.message.answer_media_group(media=media_group)
+        logger.info(
+            f"homework: student_telegram_id={call.from_user.id}: homework_id={homework_id}: media{media_group.to_python()}"
+        )
     await call.message.answer(
         text=ANSWER_START_MESSAGE,
         reply_markup=get_homework_answer_keyboard(homework_id),

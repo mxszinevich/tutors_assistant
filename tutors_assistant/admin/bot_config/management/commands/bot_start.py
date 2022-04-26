@@ -1,17 +1,14 @@
+import logging
+
 from aiogram.utils import executor
 from django.core.management import BaseCommand
 
 from bot.loader import dp
 from bot.utils.on_startup import on_startup
-
-# States
 from bot.states import RegistrationState, MenuState
-
-# Middleware
 from bot.middlewares import CheckRegistrationMiddleware
-
-# Handlers
 from bot.handlers import *
+from logger_conf import handler
 
 
 class Command(BaseCommand):
@@ -20,4 +17,9 @@ class Command(BaseCommand):
     """
 
     def handle(self, *args, **options):
+        logger = logging.getLogger(__name__)
+        logger.setLevel(logging.INFO)
+        logger.addHandler(handler)
+
+        logger.info("start polling")
         executor.start_polling(dispatcher=dp, on_startup=on_startup)

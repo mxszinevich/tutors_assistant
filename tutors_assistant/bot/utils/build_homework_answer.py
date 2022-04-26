@@ -25,7 +25,6 @@ async def building_homework_answer_file(
         file_path = f"media/answer/files/{file.file_path.split('/')[-1]}"
         await answer_file.download(destination=file_path)
         answer_data.update(file_path=file_path)
-
     await create_homework_answer(**answer_data)
 
     # yandex

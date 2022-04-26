@@ -154,3 +154,6 @@ fabric.properties
 media/
 # rabbitmq
 rabbitmq/
+
+# log
+*.log
