@@ -20,6 +20,5 @@ class Command(BaseCommand):
         logger = logging.getLogger(__name__)
         logger.setLevel(logging.INFO)
         logger.addHandler(handler)
-
         logger.info("start polling")
         executor.start_polling(dispatcher=dp, on_startup=on_startup)

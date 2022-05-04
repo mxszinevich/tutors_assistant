@@ -8,4 +8,5 @@ from .django_async import (
     get_student_resourses,
     get_student_resourse,
     get_homework_answer,
+    get_yandex_disk_data,
 )

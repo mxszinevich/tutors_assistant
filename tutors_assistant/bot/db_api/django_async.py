@@ -160,3 +160,18 @@ def get_homework_answer(**filter) -> HomeworkAnswer:
     """
     homework_answer = HomeworkAnswer.objects.filter(**filter).first()
     return homework_answer
+
+
+@sync_to_async
+def get_yandex_disk_data(teacher_id: int) -> dict:
+    print(
+        Teacher.objects.filter(id=teacher_id)
+        .values("yadisk_token", "yadisk_root_folder_name")
+        .first()
+    )
+    yandex_disk_data = dict(
+        Teacher.objects.filter(id=teacher_id)
+        .values("yadisk_token", "yadisk_root_folder_name")
+        .first()
+    )
+    return yandex_disk_data

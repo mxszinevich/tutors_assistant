@@ -1,10 +1,16 @@
-import os
+import logging
 
 import httpx
 from httpx import Response
 
+from logger_conf import handler
 
-async def yandex_disk_create_folder(path: str) -> Response:
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.INFO)
+logger.addHandler(handler)
+
+
+async def yandex_disk_create_folder(path: str, token: str) -> Response:
     """
     Создание папки на яндекс диске
     """
@@ -14,7 +20,7 @@ async def yandex_disk_create_folder(path: str) -> Response:
     headers = {
         "Content-Type": "application/json",
         "Accept": "application/json",
-        "Authorization": f"OAuth {os.getenv('YANDEX_DISK_TOKEN')}",
+        "Authorization": f"OAuth {token}",
     }
 
     async with httpx.AsyncClient() as client:
@@ -22,6 +28,11 @@ async def yandex_disk_create_folder(path: str) -> Response:
             url=create_folder_url,
             params={"path": path},
             headers=headers,
+        )
+        logger.info(
+            f"yandex_disk_create_folder: "
+            f"status= {response.status_code}"
+            f"response= {response.json()}"
         )
 
     return response

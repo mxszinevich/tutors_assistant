@@ -1,3 +1,4 @@
+import json
 import logging
 from typing import List, Dict, Any
 
@@ -31,7 +32,7 @@ from bot.keyboards.homeworks import (
     callback_data_homework_answer,
     get_homework_answer_keyboard,
 )
-from bot.loader import dp
+from bot.loader import dp, redis
 from bot.standard_bot_answers import (
     ANSWER_DATA_NOT_EMPTY,
     ANSWER_HOMEWORKS_IS_EMPTY,
@@ -59,10 +60,23 @@ async def homeworks_list(call: CallbackQuery, callback_data: dict):
     """
     Отображение списка домашних заданий
     """
+
     logger.info(f"homeworks_list: student_telegram_id={call.from_user.id}")
-    homeworks: List[Dict[str, Any]] = await get_student_homeworks(
-        student_telegram_id=call.from_user.id
-    )
+
+    if redis.get(name=f"homeworks_{call.from_user.id}"):
+        homeworks: List[Dict[str, Any]] = json.loads(
+            redis.get(name=f"homeworks_{call.from_user.id}")
+        )
+    else:
+        homeworks: List[Dict[str, Any]] = await get_student_homeworks(
+            student_telegram_id=call.from_user.id
+        )
+        redis.setex(
+            name=f"homeworks_{call.from_user.id}",
+            time=60,
+            value=json.dumps(homeworks, default=str),
+        )
+
     await call.answer()
     homeworks_keyboard = get_homeworks_keyboard(homeworks)
     homeworks_text = ANSWER_HOMEWORKS_IS_EMPTY
@@ -92,7 +106,6 @@ async def homework(call: CallbackQuery, callback_data: dict):
     Отображение домашнего задания
     """
     await call.answer()
-
     homework_id = callback_data["id"]
     logger.info(
         f"homework: student_telegram_id={call.from_user.id}: homework_id={homework_id}"
@@ -146,6 +159,9 @@ async def start_homework_answer(call: CallbackQuery, callback_data: dict):
         text=START_HOMEWORK_ANSWER,
     )
     await HomeworkAnswerState.start.set()
+    logger.info(
+        f"start_homework_answer: student_telegram_id={call.from_user.id}: homework_id={callback_data.get('id')}"
+    )
     await dp.current_state().update_data(homework_id=callback_data.get("id"))
 
 
@@ -177,6 +193,9 @@ async def get_homework_answer(message: Message, state: FSMContext):
         "homework_id": homework_id,
         "answer_text": message.text or message.caption or "",
     }
+    logger.info(
+        f"get_homework_answer: student_telegram_id={message.from_user.id}: homework_id={homework_id}"
+    )
     if message.photo:
         answer_data["answer_file"] = message.photo[-1]
     elif message.document:
@@ -203,5 +222,8 @@ async def get_homework_answer(message: Message, state: FSMContext):
             homework_id=homework_id,
         )
         producer(message.to_str())
+        logger.info(
+            f"get_homework_answer: rabbitmq message_send: {teacher['telegram_chat']}: homework_id= {homework_id}"
+        )
 
     await building_homework_answer_file(**answer_data)

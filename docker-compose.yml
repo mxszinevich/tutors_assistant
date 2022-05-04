@@ -49,6 +49,13 @@ services:
     volumes:
       - ./tutors_assistant:/tutors_assistant/
 
+  redis:
+    image: redis:7.0.0-alpine
+    ports:
+    - 6378:6379
+    volumes:
+      - ./redisdata:/tutors_assistant/redisdata
+
   postgres:
     image: postgres:13.0-alpine
     volumes:
