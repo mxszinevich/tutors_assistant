@@ -8,8 +8,8 @@ services:
       sh -c "python manage.py migrate && python manage.py collectstatic --noinput && gunicorn admin.config.wsgi:application --bind 0.0.0.0:8000"
     volumes:
       - ./tutors_assistant:/tutors_assistant/
-      - static_volume:/tutors_assistant/static
-      - media_volume:/tutors_assistant/media
+      - static_volume:/static
+      - media_volume:/media
     expose:
       - 8000
     env_file:
