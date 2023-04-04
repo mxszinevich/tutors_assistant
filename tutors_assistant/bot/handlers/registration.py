@@ -1,3 +1,4 @@
+import logging
 from typing import Dict
 
 from aiogram import types
@@ -16,13 +17,17 @@ from bot.standard_bot_answers import (
 )
 from bot.states import RegistrationState
 
+logger = logging.getLogger(__name__)
+
 
 @dp.message_handler(SenderUserFilter(), state=RegistrationState.full_name)
 async def get_student_full_name(message: types.Message, state: FSMContext):
     """
     Сохранение имени студента
     """
+
     full_name = message.text.strip()
+    logger.info(f"get_student_full_name: {full_name}")
     await state.update_data(full_name=full_name)
     await message.answer(REGISTRATION_EMAIL)
     await state.set_state(RegistrationState.email)
@@ -34,6 +39,7 @@ async def get_student_email(message: types.Message, state: FSMContext):
     Сохранение emailа студента
     """
     email = message.text.strip()
+    logger.info(f"get_student_email: {email}")
     if validate_email(email=email):
         await state.update_data(email=email)
         await message.answer(REGISTRATION_SUBJECT)
@@ -54,6 +60,10 @@ async def get_student_subject(message: types.Message, state: FSMContext):
     user = message.from_user
     data.update(
         telegram_id=user.id, telegram_name=user.full_name, telegram_chat=message.chat.id
+    )
+    logger.info(f"get_student_subject: {subject}")
+    logger.info(
+        f"get_student_subject.user:  telegram_id={user.id}, telegram_name={user.full_name}, telegram_chat={message.chat.id}"
     )
     student = await create_student(**data)
 

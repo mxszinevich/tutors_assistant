@@ -26,8 +26,8 @@ class Student(models.Model):
     telegram_name = models.CharField(
         verbose_name="Telegram name", max_length=200, blank=True
     )
-    telegram_id = models.IntegerField(verbose_name="Telegram id", blank=True)
-    telegram_chat = models.IntegerField(verbose_name="Telegram chat_id", blank=True)
+    telegram_id = models.BigIntegerField(verbose_name="Telegram id", blank=True)
+    telegram_chat = models.BigIntegerField(verbose_name="Telegram chat_id", blank=True)
 
     def __str__(self) -> str:
         return self.full_name
